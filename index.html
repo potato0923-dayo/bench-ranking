@@ -2,294 +2,81 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>potatoベンチマーク２</title>
+        <title>ベンチマーク早見（1.x系）</title>
+        <style>
+            h2{
+                margin: 0;
+            }
+        </style>
         <link rel="icon" href="a.ico" type="image/x-icon">
     </head>
     <body>
-        <h1>potatoベンチマーク v2.0</h1>
-        <button id="startButton" onclick="start()">測定スタート</button>
-        <div id="CPUconsole"></div>
-        <div id="MEMconsole"></div>
-        <div id="GPUconsole"></div>
-        <div id="COUconsole"></div>
-        <div id="totaru" style="text-align: center; font-size: 100px;"></div>
-<div id="chap" style="text-align: center;"></div>
-<a href="https://potato0923-dayo.github.io/bench-mark2/">このサイトで動かない場合はこちらから</a>
-<br>
-<a href="https://potato0923-dayo.github.io/bench-ranking2/">ランキングはこちらから</a>
-<p>Powered by chigyuFoundation</p>
-<script>
-async function start() {
-    const element = document.getElementById("CPUconsole");
-    const element2 = document.getElementById("MEMconsole");
-    const element3 = document.getElementById("GPUconsole");
-    const element4 = document.getElementById("COUconsole");
-    const totalelement = document.getElementById("totaru");
-    const kelement = document.getElementById("chap");
-    const startButton = document.getElementById("startButton");
-    startButton.disabled = true;
-    element.textContent = "";
-    element2.textContent = "";
-    element3.textContent = "";
-    element4.textContent = "";
-    totalelement.textContent = "";
-    kelement.innerHTML = ""
-    const sukoa = [];
-    for (let unk = 0; unk < 5; unk++) {
-        element4.textContent = `${unk + 1} / 5 回目`;
-        element.textContent = "CPU計測中...";
-        element2.textContent = "メモリ待機中...";
-        element3.textContent = "GPU待機中...";
-        await sleep(50);
-        const CPUscore = await measureCPU();
-        element.textContent = `CPUスコア: ${CPUscore}`;
-        element2.textContent = "メモリ計測中...";
-        await sleep(50);
-        const MEMscore = await measureMemory();
-        element2.textContent = `メモリスコア: ${MEMscore}`;
-        element3.textContent = "GPU計測中...";
-        await sleep(50);
-        const GPUscore = await measureGPU();
-        element3.textContent = `GPUスコア: ${GPUscore}`;
-        const totalScore = CPUscore + MEMscore + GPUscore;
-        sukoa.push(totalScore);
-        element4.textContent =
-            `${unk + 1} / 5 回目 完了　スコア: ${totalScore}`;
-        await sleep(100);
-    }
-    const max = Math.max(...sukoa);
-    totalelement.innerHTML = `<h1>${max}</h1>`;
-    let naiyou = "";
-    if (max >= 100000) {
-        naiyou =
-            "💡結論から言うね\n" +
-            "このPCはウルトラハイエンドモデル。　最　強　\n" +
-            "ランク:S";
-    }
-    else if (max >= 8000) {
-        naiyou =
-            "💡結論から言うね\n" +
-            "このPCはフラッグシップモデル。ほとんどの用途で余裕で使える\n" +
-            "ランク:A";
-    }
-    else if (max >= 5500) {
-        naiyou =
-            "💡結論から言うね\n" +
-            "このPCはハイエンドモデル。ほとんどのゲームも快適にできて普通にいいと思うよ。\n" +
-            "ランク:B";
-    }
-    else if (max >= 4500) {
-        naiyou =
-            "💡結論から言うね\n" +
-            "このPCは上位ミッドレンジモデル\n" + "重いゲームも設定次第でどうにかなるレベルだよ。"
-            "ランク:C";
-    }
-    else if (max >= 2000) {
-        naiyou =
-            "💡結論から言うね\n" +
-            "このPCはミッドレンジモデル。\n" + "日常使いはもちろん軽いゲームだったらできるよ"
-            "ランク:D";
-    }
-    else if (max >= 1000) {
-        naiyou = "💡結論から言うね\n" +
-            "このPCはエントリークラス。軽量アプリなら動くけどゲームは厳しいかな。\n" +
-            "ランク:E";
-    }
-    else {
-        naiyou =
-            "💡結論から言うね\n" +
-            "このPC、現代ではかなり厳しいかも。読み込みは普通のサイトだったら普通だけど編集系のサイトはとても時間がかかるね\n" +
-            "ランク:gm";
-    }
-    kelement.innerHTML = naiyou.replace(/\n/g, "<br>");
-    startButton.disabled = false;
-}
-function sleep(ms) {
-    return new Promise(resolve => {
-        setTimeout(resolve, ms);
-    });
-}
-function measureCPU() {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            const startTime = performance.now();
-            let count = 0;
-            for (let n = 2; n <= 800000; n++) {
-                let isPrime = true;
-                for (let i = 2; i <= Math.sqrt(n); i++) {
-                    if (n % i === 0) {
-                        isPrime = false;
-                        break;
-                    }
-                }
-                if (isPrime) {
-                    count++;
-                }
-            }
-            const endTime = performance.now();
-            const elapsed = endTime - startTime;
-            if (elapsed <= 0) {
-                resolve(0);
-                return;
-            }
-            const CPUscore = Math.round(500000 / elapsed);
-            resolve(CPUscore);
-        }, 10);
-    });
-}
-function measureMemory() {
-    return new Promise(resolve => {
-        setTimeout(() => {
-            const memStartTime = performance.now();
-            let dataArray = [];
-            for (let i = 0; i < 40000; i++) {
-                dataArray.push(Math.random());
-            }
-            dataArray.sort((a, b) => a - b);
-            const memEndTime = performance.now();
-            const elapsed = memEndTime - memStartTime;
-            if (elapsed <= 0) {
-                resolve(0);
-                return;
-            }
-            const MEMscore = Math.round(50000 / elapsed);
-            dataArray = null;
-            resolve(MEMscore);
-        }, 10);
-    });
-}
-function measureGPU() {
-    return new Promise(resolve => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        document.body.appendChild(canvas);
-        const info = document.createElement("div");
-        info.style.position = "absolute";
-        info.style.top = "10px";
-        info.style.left = "10px";
-        info.style.background = "rgba(0, 0, 0, 0.8)";
-        info.style.color = "#fff";
-        info.style.padding = "12px";
-        info.style.fontFamily = "sans-serif";
-        info.style.borderRadius = "5px";
-        info.style.border = "1px solid #333";
-        document.body.appendChild(info);
-        document.body.style.margin = "0";
-        document.body.style.overflow = "hidden";
-        document.body.style.backgroundColor = "#000000";
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener("resize", resize);
-        resize();
-        const objects = [];
-        const INCREMENT_SPEED = 1;
-        let lastTime = performance.now();
-        let frameCount = 0;
-        let fps = 0;
-        let isBenchmarkOver = false;
-        function drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
-            let rot = Math.PI / 2 * 3;
-            let x = cx;
-            let y = cy;
-            const step = Math.PI / spikes;
-            ctx.beginPath();
-            ctx.moveTo(cx, cy - outerRadius);
-            for (let i = 0; i < spikes; i++) {
-                x = cx + Math.cos(rot) * outerRadius;
-                y = cy + Math.sin(rot) * outerRadius;
-                ctx.lineTo(x, y);
-                rot += step;
-                x = cx + Math.cos(rot) * innerRadius;
-                y = cy + Math.sin(rot) * innerRadius;
-                ctx.lineTo(x, y);
-                rot += step;
-            }
-            ctx.lineTo(cx, cy - outerRadius);
-            ctx.closePath();
-        }
-        function loop(currentTime) {
-            if (isBenchmarkOver) {
-                return;
-            }
-            frameCount++;
-            for (let k = 0; k < INCREMENT_SPEED; k++) {
-                objects.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 6,
-                    vy: (Math.random() - 0.5) * 6,
-                    size: Math.random() * 8 + 4
-                });
-            }
-            const now = performance.now();
-            if (now - lastTime >= 1000) {
-                fps = frameCount;
-                frameCount = 0;
-                lastTime = now;
-            }
-            ctx.fillStyle = "#050505";
-            ctx.fillRect(
-                0,
-                0,
-                canvas.width,
-                canvas.height
-            );
-            ctx.shadowBlur = 1;
-            ctx.shadowColor = "#ff3366";
-            ctx.fillStyle = "#ff3366";
-            objects.forEach(obj => {
-                obj.x += obj.vx;
-                obj.y += obj.vy;
-                if (
-                    obj.x < 0 ||
-                    obj.x > canvas.width
-                ) {
-                    obj.vx *= -1;
-                }
-                if (
-                    obj.y < 0 ||
-                    obj.y > canvas.height
-                ) {
-                    obj.vy *= -1;
-                }
-                drawStar(
-                    ctx,
-                    obj.x,
-                    obj.y,
-                    5,
-                    obj.size,
-                    obj.size / 2
-                );
-                ctx.fill();
-            });
-            ctx.shadowBlur = 0;
-            info.textContent =
-                `FPS: ${fps || 60} | Objects: ${objects.length}`;
-            if (
-                fps > 0 &&
-                fps < 15
-            ) {
-                isBenchmarkOver = true;
-                const GPUscore = objects.length;
-                window.removeEventListener(
-                    "resize",
-                    resize
-                );
-                canvas.remove();
-                info.remove();
-                document.body.style.margin = "";
-                document.body.style.overflow = "auto";
-                document.body.style.backgroundColor = "";
-                resolve(GPUscore);
-                return;
-            }
-            requestAnimationFrame(loop);
-        }
-        requestAnimationFrame(loop);
-    });
-}
-</script>
-</body>
+        <h1>報告されてる中でのランキング</h1>
+        <a href="https://potato0923-dayo.github.io/bench-mark1/">ベンチマークはこちらから</a>
+        <br>
+        <a href="http://potatobench.zouri.jp/">古い機種向けのベンチマークはこちらから</a>
+        <br>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSf2OzSw80NbB-7JBd-0czHRBfI2acAGSUM2ndDzxE547rmZtw/viewform">報告はこちらから</a>
+        <hr>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>　１位　Apple iPhone14　　　　　　　　　　11125点</h2>
+            <button onclick="window.location.assign('https://support.apple.com/ja-jp/111850');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>　２位　DELL Vostro15 5510　　　　　　　　　6141点</h2>
+            <button onclick="window.location.assign('https://www.dell.com/ja-jp/shop/%E3%83%87%E3%83%AB%E3%81%AE%E3%83%8E%E3%83%BC%E3%83%88%E3%83%91%E3%82%BD%E3%82%B3%E3%83%B3/vostro-5510-%E3%83%8E%E3%83%BC%E3%83%88%E3%83%91%E3%82%BD%E3%82%B3%E3%83%B3/spd/vostro-15-5510-laptop');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>　３位　NEC ChromeBook Y4　　　　　　　　5025点</h2>
+            <button onclick="window.location.assign('https://www.nec-lavie.jp/products/bizpc/cb/y4/spec.html');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>　４位　Apple iPad8　　　　　　　　　　　　 4835点</h2>
+            <button onclick="window.location.assign('https://support.apple.com/ja-jp/118451');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>　５位　DELL Vostro 3671　　　　　　　　　 4092点</h2>
+            <button onclick="window.location.assign('https://www.dell.com/support/product-details/ja-jp/product/vostro-3671-desktop/overview');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>　６位　Apple iPhone6s Plus　　　　　　　　 4081点</h2>
+            <button onclick="window.location.assign('https://support.apple.com/ja-jp/111996');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>　７位　HP ENVY x360 Convertible 15-dr1xxx 3391点</h2>
+            <button onclick="window.location.assign('https://jp.ext.hp.com/notebooks/personal/envy_x360_15_dr1000/');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>　８位　SONY Xperia 10 VI　　　　　　　　　 3311点</h2>
+            <button onclick="window.location.assign('https://www.sony.jp/xperia/xperia/xperia10m6/');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>　９位　MOTOROLA moto g66y 5G　　　　　　2479点</h2>
+            <button onclick="window.location.assign('https://potato0923-dayo.github.io/Specinfo-1/');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>１０位　OPPO Reno 11A　　　　　　　　　　2265点</h2>
+            <button onclick="window.location.assign('https://www.oppo.com/jp/smartphones/series-reno/reno11-a/specs/');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>１１位　NEC ChromeBook Y2　　　　　　　　1629点</h2>
+            <button onclick="window.location.assign('https://jpn.nec.com/press/202002/images/1701-01-01.pdf');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>１２位　SONY BRAVIA 4K VH22　　　　　　　1373点</h2>
+            <button onclick="window.location.assign('https://www.sony.jp/bravia/products/KJ-X80L/?s_srch=all');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>１３位　NEC Versapro VK23LXZGR　　　　　　644点</h2>
+            <button onclick="window.location.assign('https://support.nec-lavie.jp/support/product/data/selection_menu/vk23lxr-01.html');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>１４位　Benesse チャレンジパッド3　　　　　 587点</h2>
+            <button onclick="window.location.assign('https://sho.benesse.co.jp/touch/spec/');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+        <div style="display: flex; align-items: center; margin: 0; padding: 0;">
+            <h2>１５位　Apple iPad3　　　　　　　　　　　　　100点</h2>
+            <button onclick="window.location.assign('https://support.apple.com/ja-jp/111992');" style="height: 35px; padding: 0 10px;">詳しいデバイス情報を見る</button>
+        </div>
+    </body>
 </html>
